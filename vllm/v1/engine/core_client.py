@@ -1077,7 +1077,7 @@ class DPAsyncMPClient(AsyncMPClient):
                     if counts is not None:
                         sliced_counts = counts[count_slice]
                         self.lb_engines = sliced_counts
-                        logger.debug("Received counts: %s (%s)", sliced_counts,
+                        logger.debug("Received counts: %s (%s)", counts,
                                      count_slice)
 
         resources.stats_update_task = asyncio.create_task(

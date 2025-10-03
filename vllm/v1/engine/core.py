@@ -1050,6 +1050,7 @@ class DPEngineCoreProc(EngineCoreProc):
             self._maybe_publish_request_counts()
 
             local_unfinished_reqs = self.scheduler.has_unfinished_requests()
+            logger.info(f"{local_unfinished_reqs=}")
             if not executed:
                 if not local_unfinished_reqs and not self.engines_running:
                     # All engines are idle.
@@ -1057,6 +1058,7 @@ class DPEngineCoreProc(EngineCoreProc):
 
                 # We are in a running state and so must execute a dummy pass
                 # if the model didn't execute any ready requests.
+                logger.info("===EXECUTE_DUMMY_BATCH===")
                 self.execute_dummy_batch()
 
             # 3) All-reduce operation to determine global unfinished reqs.
