@@ -2400,6 +2400,7 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
 
         # Run the model.
         # Use persistent buffers for CUDA graphs.
+        logger.info(f"====== EXECUTE {ubatch_slices=}, {num_input_tokens=}, {num_tokens_across_dp=}")
         with (set_forward_context(
                 attn_metadata,
                 self.vllm_config,
@@ -3046,6 +3047,7 @@ class GPUModelRunner(LoRAModelRunnerMixin, KVConnectorModelRunnerMixin):
                 (1 token) and prefill (multiple tokens) requests.
             remove_lora: If False, dummy LoRAs are not destroyed after the run
         """
+        logger.info("====== DUMMY RUN")
         assert cudagraph_runtime_mode is None or \
             cudagraph_runtime_mode.valid_runtime_modes()
 

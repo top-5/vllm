@@ -167,6 +167,7 @@ def ubatch_split(
         num_tokens_unpadded,
         uniform_decode=uniform_decode,
     )
+    logger.info(f"==== {should_attempt_ubatching=}, {num_tokens_unpadded=}")
 
     # Don't microbatch unless every other DP worker is also microbatching
     should_ubatch, num_tokens_after_padding = get_dp_padding_ubatch(
@@ -175,6 +176,7 @@ def ubatch_split(
         should_attempt_ubatching,
         vllm_config,
     )
+    logger.info(f"==== {should_ubatch=}, {num_tokens_after_padding=}")
 
     if not should_ubatch:
         return (None, None)
