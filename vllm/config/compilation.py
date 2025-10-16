@@ -290,7 +290,7 @@ class CompilationConfig:
     constructor, e.g. `CompilationConfig(inductor_passes={"a": func})`."""
 
     # CudaGraph compilation
-    cudagraph_mode: CUDAGraphMode | None = None
+    cudagraph_mode: CUDAGraphMode | None = CUDAGraphMode.FULL
     """
     The mode of the cudagraph:
 
@@ -520,6 +520,16 @@ class CompilationConfig:
         count_none = self.custom_ops.count("none")
         count_all = self.custom_ops.count("all")
         assert count_none + count_all <= 1, "Can only specify 'none' or 'all'"
+
+        if "+rms_norm" not in self.custom_ops and "-rms_norm" not in self.custom_ops:
+            self.custom_ops.append("+rms_norm")
+        if (
+            "+silu_and_mul" not in self.custom_ops
+            and "-silu_and_mul" not in self.custom_ops
+        ):
+            self.custom_ops.append("+silu_and_mul")
+        if "+quant_fp8" not in self.custom_ops and "-quant_fp8" not in self.custom_ops:
+            self.custom_ops.append("+quant_fp8")
 
         # TODO(zou3519/luka): There are 2 issues with auto-functionalization V2:
         # 1. A bug in PyTorch, fixed in 2.7:
@@ -752,7 +762,12 @@ class CompilationConfig:
             # captured. see https://github.com/vllm-project/vllm/pull/20059
             # for details. Make a copy to avoid mutating the class-level
             # list via reference.
-            self.splitting_ops = list(self._attention_ops)
+            self.splitting_ops = (
+                []
+                if self.cudagraph_mode == CUDAGraphMode.FULL
+                else list(self._attention_ops)
+            )
+
         elif len(self.splitting_ops) == 0:
             logger.warning_once("Using piecewise compilation with empty splitting_ops")
             if self.cudagraph_mode == CUDAGraphMode.PIECEWISE:

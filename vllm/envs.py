@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     VLLM_NCCL_SO_PATH: str | None = None
     LD_LIBRARY_PATH: str | None = None
     VLLM_USE_TRITON_FLASH_ATTN: bool = True
-    VLLM_V1_USE_PREFILL_DECODE_ATTENTION: bool = False
+    VLLM_V1_USE_PREFILL_DECODE_ATTENTION: bool = True
     VLLM_FLASH_ATTN_VERSION: int | None = None
     LOCAL_RANK: int = 0
     CUDA_VISIBLE_DEVICES: str | None = None
@@ -99,7 +99,7 @@ if TYPE_CHECKING:
     VLLM_DISABLED_KERNELS: list[str] = []
     VLLM_DISABLE_PYNCCL: bool = False
     VLLM_USE_V1: bool = True
-    VLLM_ROCM_USE_AITER: bool = False
+    VLLM_ROCM_USE_AITER: bool = True
     VLLM_ROCM_USE_AITER_PAGED_ATTN: bool = False
     VLLM_ROCM_USE_AITER_LINEAR: bool = True
     VLLM_ROCM_USE_AITER_MOE: bool = True
@@ -485,7 +485,7 @@ environment_variables: dict[str, Callable[[], Any]] = {
     # Use separate prefill and decode kernels for V1 attention instead of
     # the unified triton kernel.
     "VLLM_V1_USE_PREFILL_DECODE_ATTENTION": lambda: (
-        os.getenv("VLLM_V1_USE_PREFILL_DECODE_ATTENTION", "False").lower()
+        os.getenv("VLLM_V1_USE_PREFILL_DECODE_ATTENTION", "True").lower()
         in ("true", "1")
     ),
     # Force vllm to use a specific flash-attention version (2 or 3), only valid
@@ -832,7 +832,7 @@ environment_variables: dict[str, Callable[[], Any]] = {
     # Disable aiter ops unless specifically enabled.
     # Acts as a parent switch to enable the rest of the other operations.
     "VLLM_ROCM_USE_AITER": lambda: (
-        os.getenv("VLLM_ROCM_USE_AITER", "False").lower() in ("true", "1")
+        os.getenv("VLLM_ROCM_USE_AITER", "True").lower() in ("true", "1")
     ),
     # Whether to use aiter paged attention.
     # By default is disabled.
